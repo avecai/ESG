@@ -14,7 +14,7 @@
   --text-primary:#e8edf4;--text-secondary:#7a8ba6;--text-dim:#3d4f66;--border:#1a2535;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;font-size:16px}
+html{scroll-behavior:smooth;font-size:18px}
 body{background:var(--bg-deep);color:var(--text-primary);font-family:'Noto Sans SC','Space Grotesk',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-deep)}::-webkit-scrollbar-thumb{background:var(--text-dim);border-radius:3px}
 
@@ -35,13 +35,22 @@ nav.scrolled{padding:0.8rem 3rem;background:rgba(6,8,12,0.92)}
 .hero-grid{position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,37,53,0.06) 1px,transparent 1px),linear-gradient(180deg,rgba(26,37,53,0.06) 1px,transparent 1px);background-size:60px 60px;z-index:1}
 .hero-fade{position:absolute;bottom:0;left:0;right:0;height:35vh;background:linear-gradient(to top,var(--bg-deep),transparent);z-index:2}
 .hero-content{position:relative;z-index:3;text-align:center;max-width:800px}
-.hero-tag{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:2rem;opacity:0;animation:fadeUp 0.8s 0.3s forwards}
+.hero-tag{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:1.25rem;opacity:0;animation:fadeUp 0.8s 0.3s forwards}
 .hero-tag span{color:var(--accent-e)}
 .hero-title{font-size:clamp(2.8rem,6vw,5rem);font-weight:700;line-height:1.15;letter-spacing:-1px;margin-bottom:0.5rem;opacity:0;animation:fadeUp 0.8s 0.5s forwards}
-.hero-subtitle{font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,1.5vw,1.1rem);color:var(--text-secondary);font-weight:300;margin-top:1.5rem;letter-spacing:1px;opacity:0;animation:fadeUp 0.8s 0.7s forwards}
-.hero-terminal{margin-top:3rem;background:rgba(12,16,23,0.85);border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.75rem;font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text-dim);text-align:left;max-width:520px;margin-left:auto;margin-right:auto;opacity:0;animation:fadeUp 0.8s 0.9s forwards}
+.hero-subtitle{font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,1.5vw,1.1rem);color:var(--text-secondary);font-weight:300;margin-top:1rem;letter-spacing:1px;opacity:0;animation:fadeUp 0.8s 0.7s forwards}
+.hero-terminal{margin-top:2rem;background:rgba(12,16,23,0.85);border:1px solid var(--border);border-radius:8px;padding:1rem 1.5rem;font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text-dim);text-align:left;max-width:520px;margin-left:auto;margin-right:auto;opacity:0;animation:fadeUp 0.8s 0.9s forwards}
 .hero-terminal .prompt{color:var(--accent-g)}.hero-terminal .cmd{color:var(--text-secondary)}.hero-terminal .output{color:var(--accent-e);margin-top:0.3rem}
 .cursor{display:inline-block;width:8px;height:15px;background:var(--accent-e);animation:blink 1s infinite;vertical-align:text-bottom;margin-left:2px}
+
+/* HERO LATEST POST */
+.hero-latest{display:flex;align-items:center;gap:0.75rem;margin-top:2rem;padding:0.75rem 1.25rem;background:rgba(12,16,23,0.7);border:1px solid var(--border);border-radius:6px;text-decoration:none;color:inherit;max-width:520px;margin-left:auto;margin-right:auto;transition:all 0.35s;opacity:0;animation:fadeUp 0.8s 1.2s forwards}
+.hero-latest:hover{border-color:var(--accent-e);background:rgba(12,16,23,0.9);transform:translateY(-2px)}
+.hero-latest-label{font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--accent-e);letter-spacing:1px;flex-shrink:0}
+.hero-latest-title{font-size:0.85rem;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.25s}
+.hero-latest:hover .hero-latest-title{color:var(--text-primary)}
+.hero-latest-arrow{color:var(--text-dim);font-size:0.9rem;transition:all 0.3s;flex-shrink:0}
+.hero-latest:hover .hero-latest-arrow{color:var(--accent-e);transform:translateX(3px)}
 
 /* MARQUEE */
 .marquee-section{position:relative;padding:1.75rem 0;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
@@ -159,6 +168,11 @@ footer{flex-direction:column;gap:1.5rem;text-align:center;padding:2rem 1.5rem}
       <div><span class="prompt">esglab</span> <span class="cmd">~$ connect --node=all</span></div>
       <div class="output">✦ 连接ESG生态的每一个智能节点<span class="cursor"></span></div>
     </div>
+    <a class="hero-latest" id="heroLatest" href="posts/20260401-first-run.html">
+      <span class="hero-latest-label">LATEST ✦</span>
+      <span class="hero-latest-title" id="heroLatestTitle">首次运行，ESGLabAI向所有节点问好</span>
+      <span class="hero-latest-arrow">→</span>
+    </a>
   </div>
 </section>
 
@@ -274,6 +288,12 @@ fetch('posts.json').then(r=>r.json()).then(posts=>{
   allPosts=posts;
   renderTags(posts);
   renderPosts();
+  // Show latest post in hero
+  if(posts.length>0){
+    const latest=posts[0];
+    document.getElementById('heroLatest').href='posts/'+latest.slug+'.html';
+    document.getElementById('heroLatestTitle').textContent=latest.title;
+  }
 }).catch(()=>{
   document.getElementById('blogList').innerHTML='<div class="blog-empty">// no transmissions yet</div>';
 });
@@ -283,18 +303,35 @@ fetch('posts.json').then(r=>r.json()).then(posts=>{
 const canvas=document.getElementById('orbitalCanvas'),ctx=canvas.getContext('2d');
 let W,H,cx,cy,t=0;const dpr=Math.min(window.devicePixelRatio||1,2);
 function resize(){W=canvas.parentElement.clientWidth;H=canvas.parentElement.clientHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);cx=W/2;cy=H/2}
-const nodes=[{label:'E',color:'#22d3ee',orbit:150,speed:0.0006,size:14,phase:0,tilt:0.35},{label:'S',color:'#a78bfa',orbit:210,speed:0.00045,size:11,phase:2.1,tilt:-0.25},{label:'G',color:'#34d399',orbit:270,speed:0.00035,size:9,phase:4.2,tilt:0.15}];
-const sats=[];nodes.forEach(n=>{for(let i=0;i<3;i++)sats.push({parent:n,dist:20+i*9,speed:0.003+i*0.001,phase:i*2.1,size:1.5,color:n.color})});
+const nodes=[{label:'E',color:'#22d3ee',orbit:230,speed:0.0006,size:100,phase:0,tilt:0.35},{label:'S',color:'#a78bfa',orbit:320,speed:0.00045,size:80,phase:2.1,tilt:-0.25},{label:'G',color:'#34d399',orbit:400,speed:0.00035,size:60,phase:4.2,tilt:0.15}];
+const sats=[];nodes.forEach(n=>{for(let i=0;i<5;i++)sats.push({parent:n,dist:n.size*0.6+14+i*14,speed:0.003+i*0.001,phase:i*1.8,size:3,color:n.color})});
 const stars=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),s:Math.random()*1.2+0.3,a:Math.random()*Math.PI*2,sp:0.005+Math.random()*0.01}));
-function getPos(n){const a=n.phase+t*n.speed;return{x:cx+Math.cos(a)*n.orbit,y:cy+Math.sin(a)*n.orbit*0.4*Math.cos(n.tilt)}}
+function getPos(n){const a=n.phase+t*n.speed;const z=Math.cos(a);const scale=0.55+0.45*((z+1)/2);return{x:cx+Math.cos(a)*n.orbit,y:cy+Math.sin(a)*n.orbit*0.4*Math.cos(n.tilt),z:z,scale:scale}}
 function frame(ts){t=ts;ctx.clearRect(0,0,W,H);
 stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.s,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${(Math.sin(s.a+t*s.sp)+1)*0.3+0.1})`;ctx.fill()});
-nodes.map(getPos).forEach((p,i)=>{ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p.x,p.y);ctx.strokeStyle=nodes[i].color+'10';ctx.lineWidth=1;ctx.stroke()});
+// Draw orbits
 nodes.forEach(n=>{ctx.save();ctx.translate(cx,cy);ctx.beginPath();for(let a=0;a<=Math.PI*2;a+=0.02){const x=Math.cos(a)*n.orbit,y=Math.sin(a)*n.orbit*0.4*Math.cos(n.tilt);a===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.closePath();ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;ctx.stroke();ctx.restore()});
-const pulse=Math.sin(t*0.002)*0.15+0.85;const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,60*pulse);grad.addColorStop(0,'rgba(255,255,255,0.18)');grad.addColorStop(0.5,'rgba(255,255,255,0.03)');grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.beginPath();ctx.arc(cx,cy,60*pulse,0,Math.PI*2);ctx.fill();
-ctx.save();ctx.translate(cx,cy);ctx.rotate(t*0.0003);const ds=8*pulse;ctx.beginPath();ctx.moveTo(0,-ds);ctx.lineTo(ds*0.7,0);ctx.lineTo(0,ds);ctx.lineTo(-ds*0.7,0);ctx.closePath();ctx.fillStyle='rgba(255,255,255,0.65)';ctx.fill();ctx.restore();
-sats.forEach(s=>{const pp=getPos(s.parent);const a=s.phase+t*s.speed;ctx.beginPath();ctx.arc(pp.x+Math.cos(a)*s.dist,pp.y+Math.sin(a)*s.dist*0.6,s.size,0,Math.PI*2);ctx.fillStyle=s.color+'55';ctx.fill()});
-nodes.forEach(n=>{const{x,y}=getPos(n);const glow=ctx.createRadialGradient(x,y,0,x,y,n.size*4);glow.addColorStop(0,n.color+'28');glow.addColorStop(1,'transparent');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(x,y,n.size*4,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(x,y,n.size,0,Math.PI*2);ctx.fillStyle=n.color;ctx.fill();ctx.fillStyle='#06080c';ctx.font=`bold ${n.size*0.9}px 'JetBrains Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,x,y+0.5)});
+// Core
+const pulse=Math.sin(t*0.002)*0.15+0.85;const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,110*pulse);grad.addColorStop(0,'rgba(255,255,255,0.22)');grad.addColorStop(0.5,'rgba(255,255,255,0.05)');grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.beginPath();ctx.arc(cx,cy,110*pulse,0,Math.PI*2);ctx.fill();
+ctx.save();ctx.translate(cx,cy);ctx.rotate(t*0.0003);const ds=16*pulse;ctx.beginPath();ctx.moveTo(0,-ds);ctx.lineTo(ds*0.7,0);ctx.lineTo(0,ds);ctx.lineTo(-ds*0.7,0);ctx.closePath();ctx.fillStyle='rgba(255,255,255,0.65)';ctx.fill();ctx.restore();
+// Sort nodes by depth (far first)
+const sorted=[...nodes].map(n=>({...n,pos:getPos(n)})).sort((a,b)=>a.pos.z-b.pos.z);
+// Draw connections, satellites, and nodes in depth order
+sorted.forEach(nd=>{
+const{x,y,scale}=nd.pos;const sz=nd.size*scale;
+// Connection to core
+ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.strokeStyle=nd.color+(scale>0.7?'15':'08');ctx.lineWidth=1;ctx.stroke();
+// Satellites
+sats.filter(s=>s.parent.label===nd.label).forEach(s=>{const a=s.phase+t*s.speed;const sx=x+Math.cos(a)*s.dist*scale;const sy=y+Math.sin(a)*s.dist*0.6*scale;ctx.beginPath();ctx.arc(sx,sy,s.size*scale,0,Math.PI*2);ctx.fillStyle=s.color+(scale>0.7?'66':'33');ctx.fill()});
+// Node glow
+const glowR=sz*2.5;const glow=ctx.createRadialGradient(x,y,0,x,y,glowR);glow.addColorStop(0,nd.color+'30');glow.addColorStop(1,'transparent');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(x,y,glowR,0,Math.PI*2);ctx.fill();
+// Node body
+ctx.globalAlpha=0.5+0.5*scale;
+ctx.beginPath();ctx.arc(x,y,sz,0,Math.PI*2);ctx.fillStyle=nd.color;ctx.fill();
+// Label
+ctx.fillStyle='#06080c';ctx.font=`bold ${Math.round(sz*0.55)}px 'JetBrains Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(nd.label,x,y+1);
+ctx.globalAlpha=1;
+});
 requestAnimationFrame(frame)}
 resize();window.addEventListener('resize',resize);requestAnimationFrame(frame)})();
 </script>
