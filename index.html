@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESGLab.AI — AI驱动的ESG创新平台</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2306080c'/><text x='16' y='21' text-anchor='middle' font-size='14' fill='%2322d3ee' font-family='monospace' font-weight='bold'>E</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+:root {
+  --bg-deep:#06080c;--bg-surface:#0c1017;--bg-card:#111822;--bg-card-hover:#16202e;
+  --accent-e:#22d3ee;--accent-s:#a78bfa;--accent-g:#34d399;--accent-ai:#f59e0b;
+  --text-primary:#e8edf4;--text-secondary:#7a8ba6;--text-dim:#3d4f66;--border:#1a2535;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg-deep);color:var(--text-primary);font-family:'Noto Sans SC','Space Grotesk',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-deep)}::-webkit-scrollbar-thumb{background:var(--text-dim);border-radius:3px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(6,8,12,0.7);backdrop-filter:blur(20px);border-bottom:1px solid rgba(26,37,53,0.5);transition:all 0.3s}
+nav.scrolled{padding:0.8rem 3rem;background:rgba(6,8,12,0.92)}
+.nav-brand{display:flex;align-items:center;gap:0.2rem;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:1.1rem;text-decoration:none;color:inherit}
+.c-e{color:var(--accent-e)}.c-s{color:var(--accent-s)}.c-g{color:var(--accent-g)}
+.nav-links{display:flex;gap:2.5rem;align-items:center}
+.nav-links a{color:var(--text-secondary);text-decoration:none;font-size:0.85rem;font-family:'JetBrains Mono',monospace;transition:color 0.25s}
+.nav-links a:hover{color:var(--text-primary)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px}
+.nav-toggle span{display:block;width:20px;height:2px;background:var(--text-secondary);margin:4px 0;transition:0.3s}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:6rem 2rem 4rem;overflow:hidden}
+.hero-canvas-wrap{position:absolute;inset:0;z-index:0}.hero-canvas-wrap canvas{width:100%;height:100%;opacity:0.85}
+.hero-grid{position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,37,53,0.06) 1px,transparent 1px),linear-gradient(180deg,rgba(26,37,53,0.06) 1px,transparent 1px);background-size:60px 60px;z-index:1}
+.hero-fade{position:absolute;bottom:0;left:0;right:0;height:35vh;background:linear-gradient(to top,var(--bg-deep),transparent);z-index:2}
+.hero-content{position:relative;z-index:3;text-align:center;max-width:800px}
+.hero-tag{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:2rem;opacity:0;animation:fadeUp 0.8s 0.3s forwards}
+.hero-tag span{color:var(--accent-e)}
+.hero-title{font-size:clamp(2.8rem,6vw,5rem);font-weight:700;line-height:1.15;letter-spacing:-1px;margin-bottom:0.5rem;opacity:0;animation:fadeUp 0.8s 0.5s forwards}
+.hero-subtitle{font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,1.5vw,1.1rem);color:var(--text-secondary);font-weight:300;margin-top:1.5rem;letter-spacing:1px;opacity:0;animation:fadeUp 0.8s 0.7s forwards}
+.hero-terminal{margin-top:3rem;background:rgba(12,16,23,0.85);border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.75rem;font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text-dim);text-align:left;max-width:520px;margin-left:auto;margin-right:auto;opacity:0;animation:fadeUp 0.8s 0.9s forwards}
+.hero-terminal .prompt{color:var(--accent-g)}.hero-terminal .cmd{color:var(--text-secondary)}.hero-terminal .output{color:var(--accent-e);margin-top:0.3rem}
+.cursor{display:inline-block;width:8px;height:15px;background:var(--accent-e);animation:blink 1s infinite;vertical-align:text-bottom;margin-left:2px}
+
+/* MARQUEE */
+.marquee-section{position:relative;padding:1.75rem 0;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.marquee-track{display:flex;width:max-content;animation:marquee 35s linear infinite}
+.marquee-item{flex-shrink:0;padding:0 3rem;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;white-space:nowrap}
+
+/* SECTIONS */
+.section-wrap{max-width:1100px;margin:0 auto;padding:6rem 3rem}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:2.5rem}
+.section-label::before{content:'// ';color:var(--accent-e)}
+
+/* BLOG */
+.tag-filter{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:2rem}
+.tag-btn{font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.5px;padding:0.35rem 0.85rem;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.25s}
+.tag-btn:hover{border-color:var(--text-secondary);color:var(--text-secondary)}
+.tag-btn.active{border-color:var(--accent-e);color:var(--accent-e);background:rgba(34,211,238,0.08)}
+.blog-list{display:flex;flex-direction:column;gap:0.5rem}
+.blog-item{display:grid;grid-template-columns:50px 1fr auto;align-items:center;gap:1.75rem;padding:1.5rem;background:var(--bg-surface);border:1px solid transparent;border-radius:8px;text-decoration:none;color:inherit;transition:all 0.35s cubic-bezier(0.23,1,0.32,1);cursor:pointer}
+.blog-item:hover{background:var(--bg-card);border-color:var(--border);transform:translateX(6px)}
+.blog-num{font-family:'JetBrains Mono',monospace;font-size:1.15rem;font-weight:300;color:var(--text-dim)}
+.blog-info h4{font-size:1.02rem;font-weight:500;margin-bottom:0.3rem}
+.blog-info .blog-desc{font-size:0.82rem;color:var(--text-secondary);font-weight:300;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.blog-meta{display:flex;align-items:center;gap:0.75rem}
+.blog-date{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-dim)}
+.blog-tag{font-family:'JetBrains Mono',monospace;font-size:0.62rem;padding:0.2rem 0.55rem;border-radius:3px;white-space:nowrap}
+.blog-arrow{font-size:1rem;color:var(--text-dim);transition:all 0.3s;margin-left:0.5rem}
+.blog-item:hover .blog-arrow{color:var(--accent-e);transform:translateX(4px)}
+.blog-empty{text-align:center;padding:3rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:0.85rem}
+
+/* TAG COLORS */
+.t-ESG,.t-esg{background:rgba(34,211,238,0.12);color:#22d3ee}
+.t-AI,.t-ai{background:rgba(245,158,11,0.12);color:#f59e0b}
+.t-碳管理,.t-carbon{background:rgba(52,211,153,0.12);color:#34d399}
+.t-合规,.t-governance{background:rgba(167,139,250,0.12);color:#a78bfa}
+.t-工具,.t-tools{background:rgba(245,158,11,0.12);color:#f59e0b}
+.t-观点,.t-opinion{background:rgba(255,255,255,0.06);color:#94a3b8}
+.t-供应链,.t-supply{background:rgba(167,139,250,0.12);color:#a78bfa}
+.t-政策{background:rgba(52,211,153,0.12);color:#34d399}
+.t-数据{background:rgba(34,211,238,0.12);color:#22d3ee}
+.t-深度{background:rgba(244,114,182,0.12);color:#f472b6}
+
+/* AGENTS */
+.agents-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.agent-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:2.5rem 2rem;transition:all 0.4s cubic-bezier(0.23,1,0.32,1);position:relative;overflow:hidden}
+.agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.4s}
+.agent-card:nth-child(1)::before{background:linear-gradient(90deg,var(--accent-e),transparent)}
+.agent-card:nth-child(2)::before{background:linear-gradient(90deg,var(--accent-s),transparent)}
+.agent-card:nth-child(3)::before{background:linear-gradient(90deg,var(--accent-g),transparent)}
+.agent-card:nth-child(4)::before{background:linear-gradient(90deg,var(--accent-ai),transparent)}
+.agent-card:hover{background:var(--bg-card-hover);border-color:rgba(255,255,255,0.08);transform:translateY(-4px)}
+.agent-card:hover::before{opacity:1}
+.agent-status{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:1px;color:var(--text-dim);margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem}
+.status-dot{width:6px;height:6px;border-radius:50%}
+.status-dot.soon{background:var(--accent-ai)}.status-dot.dev{background:var(--text-dim)}
+.agent-card h3{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:500;margin-bottom:0.75rem}
+.agent-card p{font-size:0.85rem;color:var(--text-secondary);line-height:1.7;font-weight:300}
+
+/* CONTACT */
+.contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.contact-text h2{font-size:1.8rem;font-weight:600;margin-bottom:1rem}
+.contact-text p{font-size:0.92rem;color:var(--text-secondary);line-height:1.8;font-weight:300}
+.contact-links{display:flex;flex-direction:column;gap:1rem;padding-top:0.5rem}
+.contact-link{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:inherit;transition:all 0.3s}
+.contact-link:hover{background:var(--bg-card-hover);border-color:rgba(255,255,255,0.08);transform:translateX(4px)}
+.contact-link-icon{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent-e);width:28px}
+.contact-link-label{font-size:0.85rem}
+.contact-link-sub{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-dim);margin-top:0.15rem}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:3rem;display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto}
+.footer-left{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-dim);line-height:1.8}
+.footer-right{display:flex;gap:2rem}
+.footer-right a{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--text-dim);text-decoration:none;transition:color 0.25s}
+.footer-right a:hover{color:var(--accent-e)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.8s cubic-bezier(0.23,1,0.32,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+nav{padding:1rem 1.5rem}.nav-links{display:none}.nav-toggle{display:block}
+nav.open .nav-links{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(6,8,12,0.95);padding:1.5rem;border-bottom:1px solid var(--border);gap:1.25rem}
+.hero{padding:5rem 1.5rem 3rem}.section-wrap{padding:4rem 1.5rem}
+.agents-grid{grid-template-columns:1fr}.contact-inner{grid-template-columns:1fr;gap:2rem}
+.blog-item{grid-template-columns:1fr;gap:0.75rem;padding:1.25rem}.blog-num{display:none}.blog-meta{margin-top:0.25rem}
+footer{flex-direction:column;gap:1.5rem;text-align:center;padding:2rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a href="#" class="nav-brand"><span class="c-e">E</span><span class="c-s">S</span><span class="c-g">G</span><span>Lab.AI</span></a>
+  <div class="nav-links" id="navLinks">
+    <a href="#blog">blog</a>
+    <a href="#agents">agents</a>
+    <a href="#contact">contact</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="hero">
+  <div class="hero-canvas-wrap"><canvas id="orbitalCanvas"></canvas></div>
+  <div class="hero-grid"></div>
+  <div class="hero-fade"></div>
+  <div class="hero-content">
+    <div class="hero-tag"><span>$</span> INITIALIZING ESGLAB.AI v1.0</div>
+    <h1 class="hero-title"><span class="c-e">E</span><span class="c-s">S</span><span class="c-g">G</span>Lab<span style="color:var(--text-dim);font-weight:300">.AI</span></h1>
+    <p class="hero-subtitle">AI驱动的ESG创新平台</p>
+    <div class="hero-terminal">
+      <div><span class="prompt">esglab</span> <span class="cmd">~$ connect --node=all</span></div>
+      <div class="output">✦ 连接ESG生态的每一个智能节点<span class="cursor"></span></div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item"><span style="color:var(--accent-e)">Environmental</span> · Climate · Carbon · Energy</div>
+    <div class="marquee-item"><span style="color:var(--accent-s)">Social</span> · DEI · Labor · Supply Chain</div>
+    <div class="marquee-item"><span style="color:var(--accent-g)">Governance</span> · Compliance · Risk · Ethics</div>
+    <div class="marquee-item">AI · LLM · Agent · Analytics</div>
+    <div class="marquee-item"><span style="color:var(--accent-e)">Environmental</span> · Climate · Carbon · Energy</div>
+    <div class="marquee-item"><span style="color:var(--accent-s)">Social</span> · DEI · Labor · Supply Chain</div>
+    <div class="marquee-item"><span style="color:var(--accent-g)">Governance</span> · Compliance · Risk · Ethics</div>
+    <div class="marquee-item">AI · LLM · Agent · Analytics</div>
+  </div>
+</div>
+
+<section class="section-wrap" id="blog">
+  <div class="section-label reveal">LATEST TRANSMISSIONS</div>
+  <div class="tag-filter reveal" id="tagFilter"></div>
+  <div class="blog-list" id="blogList">
+    <div class="blog-empty">loading...</div>
+  </div>
+</section>
+
+<section class="section-wrap" id="agents">
+  <div class="section-label reveal">ESG AGENTS</div>
+  <div class="agents-grid">
+    <div class="agent-card reveal"><div class="agent-status"><span class="status-dot soon"></span> COMING SOON</div><h3>esglab.insight()</h3><p>ESG资讯智能体——自动追踪、聚合、解读全球ESG与AI交叉领域的前沿动态。</p></div>
+    <div class="agent-card reveal"><div class="agent-status"><span class="status-dot dev"></span> IN DEVELOPMENT</div><h3>esglab.audit()</h3><p>ESG合规检查智能体——基于CSRD/ISSB等框架，对企业披露内容进行AI辅助审查。</p></div>
+    <div class="agent-card reveal"><div class="agent-status"><span class="status-dot dev"></span> IN DEVELOPMENT</div><h3>esglab.carbon()</h3><p>碳核算助手——连接排放因子数据库，辅助Scope 1/2/3碳排放计算与报告。</p></div>
+    <div class="agent-card reveal"><div class="agent-status"><span class="status-dot dev"></span> PLANNED</div><h3>esglab.match()</h3><p>ESG服务匹配——连接ESG服务商与企业需求，智能推荐解决方案。</p></div>
+  </div>
+</section>
+
+<section class="section-wrap" id="contact">
+  <div class="section-label reveal">CONNECT</div>
+  <div class="contact-inner">
+    <div class="contact-text reveal"><h2>与我们连接</h2><p>ESGLab.AI 正在构建ESG与AI的交汇点。无论你是ESG从业者、AI开发者、还是寻求ESG解决方案的企业，欢迎加入这个生态。</p></div>
+    <div class="contact-links reveal">
+      <a class="contact-link" href="https://mp.weixin.qq.com" target="_blank"><span class="contact-link-icon">wx://</span><div><div class="contact-link-label">微信公众号</div><div class="contact-link-sub">ESGLabAI</div></div></a>
+      <a class="contact-link" href="mailto:contact@esglab.ai"><span class="contact-link-icon">mail:</span><div><div class="contact-link-label">邮件联系</div><div class="contact-link-sub">contact@esglab.ai</div></div></a>
+      <a class="contact-link" href="https://esgai.net" target="_blank"><span class="contact-link-icon">web://</span><div><div class="contact-link-label">ESGAI.NET</div><div class="contact-link-sub">备用站点</div></div></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">© 2026 ESGLab.AI<br>AI驱动的ESG创新平台</div>
+  <div class="footer-right">
+    <a href="https://esglab.ai">esglab.ai</a>
+    <a href="https://esgai.net">esgai.net</a>
+    <a href="#">WeChat: ESGLabAI</a>
+  </div>
+</footer>
+
+<script>
+// NAV
+const navEl=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>navEl.classList.toggle('scrolled',window.scrollY>50));
+document.getElementById('navToggle').addEventListener('click',()=>navEl.classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>navEl.classList.remove('open')));
+
+// SCROLL REVEAL
+const obs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*60)})},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// DYNAMIC BLOG — reads posts.json
+const TAG_COLORS={"ESG":"#22d3ee","AI":"#f59e0b","碳管理":"#34d399","合规":"#a78bfa","工具":"#f59e0b","观点":"#94a3b8","供应链":"#a78bfa","政策":"#34d399","数据":"#22d3ee","深度":"#f472b6"};
+
+let allPosts=[];
+let activeTag="all";
+
+function renderTags(posts){
+  const allTags=new Set();
+  posts.forEach(p=>(p.tags||[]).forEach(t=>allTags.add(t)));
+  const container=document.getElementById('tagFilter');
+  container.innerHTML='';
+  const allBtn=document.createElement('button');
+  allBtn.className='tag-btn'+(activeTag==='all'?' active':'');
+  allBtn.textContent='ALL';
+  allBtn.onclick=()=>{activeTag='all';renderTags(allPosts);renderPosts()};
+  container.appendChild(allBtn);
+  allTags.forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='tag-btn'+(activeTag===t?' active':'');
+    btn.textContent=t;
+    btn.onclick=()=>{activeTag=t;renderTags(allPosts);renderPosts()};
+    container.appendChild(btn);
+  });
+}
+
+function renderPosts(){
+  const list=document.getElementById('blogList');
+  const filtered=activeTag==='all'?allPosts:allPosts.filter(p=>(p.tags||[]).includes(activeTag));
+  if(!filtered.length){list.innerHTML='<div class="blog-empty">暂无文章</div>';return}
+  list.innerHTML=filtered.map((p,i)=>{
+    const num=String(i+1).padStart(2,'0');
+    const tagsHtml=(p.tags||[]).map(t=>{
+      const c=TAG_COLORS[t]||'#94a3b8';
+      return `<span class="blog-tag" style="background:${c}18;color:${c}">${t}</span>`;
+    }).join('');
+    const authorBadge=p.author==='ai'?
+      '<span class="blog-tag" style="background:rgba(34,211,238,0.1);color:#22d3ee">AI</span>':'';
+    return `<a class="blog-item" href="posts/${p.slug}.html">
+      <span class="blog-num">${num}</span>
+      <div class="blog-info"><h4>${p.title}</h4><p class="blog-desc">${p.excerpt||''}</p></div>
+      <div class="blog-meta"><span class="blog-date">${p.date}</span>${tagsHtml}${authorBadge}<span class="blog-arrow">→</span></div>
+    </a>`;
+  }).join('');
+}
+
+fetch('posts.json').then(r=>r.json()).then(posts=>{
+  allPosts=posts;
+  renderTags(posts);
+  renderPosts();
+}).catch(()=>{
+  document.getElementById('blogList').innerHTML='<div class="blog-empty">// no transmissions yet</div>';
+});
+
+// ORBITAL CANVAS
+(()=>{
+const canvas=document.getElementById('orbitalCanvas'),ctx=canvas.getContext('2d');
+let W,H,cx,cy,t=0;const dpr=Math.min(window.devicePixelRatio||1,2);
+function resize(){W=canvas.parentElement.clientWidth;H=canvas.parentElement.clientHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);cx=W/2;cy=H/2}
+const nodes=[{label:'E',color:'#22d3ee',orbit:150,speed:0.0006,size:14,phase:0,tilt:0.35},{label:'S',color:'#a78bfa',orbit:210,speed:0.00045,size:11,phase:2.1,tilt:-0.25},{label:'G',color:'#34d399',orbit:270,speed:0.00035,size:9,phase:4.2,tilt:0.15}];
+const sats=[];nodes.forEach(n=>{for(let i=0;i<3;i++)sats.push({parent:n,dist:20+i*9,speed:0.003+i*0.001,phase:i*2.1,size:1.5,color:n.color})});
+const stars=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),s:Math.random()*1.2+0.3,a:Math.random()*Math.PI*2,sp:0.005+Math.random()*0.01}));
+function getPos(n){const a=n.phase+t*n.speed;return{x:cx+Math.cos(a)*n.orbit,y:cy+Math.sin(a)*n.orbit*0.4*Math.cos(n.tilt)}}
+function frame(ts){t=ts;ctx.clearRect(0,0,W,H);
+stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.s,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${(Math.sin(s.a+t*s.sp)+1)*0.3+0.1})`;ctx.fill()});
+nodes.map(getPos).forEach((p,i)=>{ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p.x,p.y);ctx.strokeStyle=nodes[i].color+'10';ctx.lineWidth=1;ctx.stroke()});
+nodes.forEach(n=>{ctx.save();ctx.translate(cx,cy);ctx.beginPath();for(let a=0;a<=Math.PI*2;a+=0.02){const x=Math.cos(a)*n.orbit,y=Math.sin(a)*n.orbit*0.4*Math.cos(n.tilt);a===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.closePath();ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;ctx.stroke();ctx.restore()});
+const pulse=Math.sin(t*0.002)*0.15+0.85;const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,60*pulse);grad.addColorStop(0,'rgba(255,255,255,0.18)');grad.addColorStop(0.5,'rgba(255,255,255,0.03)');grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.beginPath();ctx.arc(cx,cy,60*pulse,0,Math.PI*2);ctx.fill();
+ctx.save();ctx.translate(cx,cy);ctx.rotate(t*0.0003);const ds=8*pulse;ctx.beginPath();ctx.moveTo(0,-ds);ctx.lineTo(ds*0.7,0);ctx.lineTo(0,ds);ctx.lineTo(-ds*0.7,0);ctx.closePath();ctx.fillStyle='rgba(255,255,255,0.65)';ctx.fill();ctx.restore();
+sats.forEach(s=>{const pp=getPos(s.parent);const a=s.phase+t*s.speed;ctx.beginPath();ctx.arc(pp.x+Math.cos(a)*s.dist,pp.y+Math.sin(a)*s.dist*0.6,s.size,0,Math.PI*2);ctx.fillStyle=s.color+'55';ctx.fill()});
+nodes.forEach(n=>{const{x,y}=getPos(n);const glow=ctx.createRadialGradient(x,y,0,x,y,n.size*4);glow.addColorStop(0,n.color+'28');glow.addColorStop(1,'transparent');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(x,y,n.size*4,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(x,y,n.size,0,Math.PI*2);ctx.fillStyle=n.color;ctx.fill();ctx.fillStyle='#06080c';ctx.font=`bold ${n.size*0.9}px 'JetBrains Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n.label,x,y+0.5)});
+requestAnimationFrame(frame)}
+resize();window.addEventListener('resize',resize);requestAnimationFrame(frame)})();
+</script>
+</body>
+</html>
